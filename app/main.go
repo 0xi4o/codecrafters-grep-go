@@ -8,9 +8,6 @@ import (
 	"unicode/utf8"
 )
 
-// Ensures gofmt doesn't remove the "bytes" import above (feel free to remove this!)
-var _ = bytes.ContainsAny
-
 // Usage: echo <input_text> | your_program.sh -E <pattern>
 func main() {
 	if len(os.Args) < 3 || os.Args[1] != "-E" {
@@ -50,7 +47,7 @@ func matchLine(line []byte, pattern string) (bool, error) {
 	fmt.Fprintln(os.Stderr, "Logs from your program will appear here!")
 
 	// Uncomment this to pass the first stage
-	// ok = bytes.ContainsAny(line, pattern)
+	ok = bytes.ContainsAny(line, pattern)
 
 	return ok, nil
 }
