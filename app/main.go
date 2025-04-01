@@ -46,6 +46,7 @@ func matchLine(line []byte, pattern string) (bool, error) {
 	// fmt.Fprintln(os.Stderr, "Logs from your program will appear here!")
 
 	search := strings.ReplaceAll(pattern, "\\d", "0123456789")
+	search = strings.ReplaceAll(search, "\\w", "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_")
 	ok := bytes.ContainsAny(line, search)
 
 	return ok, nil
