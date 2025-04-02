@@ -45,13 +45,21 @@ func matchLine(line []byte, pattern string) (bool, error) {
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
 	// fmt.Fprintln(os.Stderr, "Logs from your program will appear here!")
 
+	// alphanumeric
 	search := strings.ReplaceAll(pattern, "\\w", "\\dabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_")
+	// numeric
 	search = strings.ReplaceAll(search, "\\d", "0123456789")
+	// positive group
 	if strings.HasPrefix(search, "[") && strings.HasSuffix(search, "]") {
 		search = strings.Replace(search, "[", "", 1)
 		search = strings.Replace(search, "]", "", 1)
+		// negative group
+		if strings.HasPrefix(search, "^") {
+			search = strings.Replace(search, "^", "", 1)
+			fmt.Printf("negative character group search: %s\n", search)
+			return !bytes.ContainsAny(line, search), nil
+		}
 	}
-	ok := bytes.ContainsAny(line, search)
 
-	return ok, nil
+	return bytes.ContainsAny(line, search), nil
 }
