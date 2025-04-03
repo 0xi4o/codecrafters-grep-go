@@ -31,9 +31,11 @@ func main() {
 	}
 
 	if !ok {
+		fmt.Printf("exit code: %d\n", 1)
 		os.Exit(1)
 	}
 
+	fmt.Printf("exit code: %d\n", 0)
 	// default exit code is 0 which means success
 }
 
@@ -42,13 +44,14 @@ func matchLine(line []byte, pattern string) (bool, error) {
 		return false, fmt.Errorf("unsupported pattern: %q", pattern)
 	}
 
-	// You can use print statements as follows for debugging, they'll be visible when running tests.
-	// fmt.Fprintln(os.Stderr, "Logs from your program will appear here!")
+	alphabets := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	numbers := "0123456789"
+	underscore := "_"
 
 	// alphanumeric
-	search := strings.ReplaceAll(pattern, "\\w", "\\dabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_")
+	search := strings.ReplaceAll(pattern, "\\w", fmt.Sprintf("\\d%s%s", alphabets, underscore))
 	// numeric
-	search = strings.ReplaceAll(search, "\\d", "0123456789")
+	search = strings.ReplaceAll(search, "\\d", numbers)
 	// positive group
 	if strings.HasPrefix(search, "[") && strings.HasSuffix(search, "]") {
 		search = strings.Replace(search, "[", "", 1)
@@ -56,8 +59,11 @@ func matchLine(line []byte, pattern string) (bool, error) {
 		// negative group
 		if strings.HasPrefix(search, "^") {
 			search = strings.Replace(search, "^", "", 1)
-			fmt.Printf("negative character group search: %s\n", search)
-			return !bytes.ContainsAny(line, search), nil
+			w := fmt.Sprintf("%s%s%s", numbers, alphabets, underscore)
+			for _, r := range search {
+				w = strings.Replace(w, string(r), "", 1)
+			}
+			search = w
 		}
 	}
 
